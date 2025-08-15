@@ -1,5 +1,7 @@
 # FontMatrix - Font Comparison Tool
 
+> **Language**: **English** | [繁體中文](README_zh-TW.md)
+
 A program that comparing character coverage across multiple font files.
 
 ## ✨ Features

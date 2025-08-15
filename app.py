@@ -16,8 +16,6 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 # Constants
-CHECK = "✔"
-CROSS = "❌"
 DEFAULT_SAMPLE_TEXT = "The quick brown fox jumps over the lazy dog — 123 一二三四"
 MAX_FONTS = 5
 SUPPORTED_EXTENSIONS = {".ttf", ".otf"}
@@ -381,7 +379,7 @@ class FontMatrixApp:
             )
     
     def generate_preview_html(self, files: Optional[List[Union[str, gr.File]]], 
-                            text: str, height_px: int) -> str:
+                            text: str) -> str:
         """Generate HTML preview of text rendered in each font."""
         try:
             if not files:
@@ -400,14 +398,14 @@ class FontMatrixApp:
                 
                 try:
                     img = self.image_renderer.render_text_image(sample_text, path)
-                    img = self.image_renderer.resize_image_to_height(img, int(height_px or 96))
+                    img = self.image_renderer.resize_image_to_height(img, 96)
                     uri = self.image_renderer.image_to_data_uri(img)
                     
                     row = (
                         f'<div class="font-row">'
                         f'<div class="font-caption">{name}</div>'
                         f'<img src="{uri}" alt="{name}" '
-                        f'style="height:{int(height_px or 96)}px;max-width:100%;display:block;" />'
+                        f'style="height:96px;max-width:100%;display:block;" />'
                         f'</div>'
                     )
                     rows_html.append(row)
@@ -505,10 +503,7 @@ class UIBuilder:
                 placeholder="Type a sentence to preview, e.g. The quick brown fox 一二三四",
                 value=DEFAULT_SAMPLE_TEXT,
             )
-            preview_height = gr.Slider(
-                label="Preview height (px)", 
-                minimum=24, maximum=160, step=4, value=96
-            )
+
             filter_tb = gr.Textbox(
                 label="Search / Filter (character, substring, or hex like 4E00 or U+4E00)",
                 placeholder="e.g., 一 or 4E00",
@@ -532,7 +527,6 @@ class UIBuilder:
         
         return {
             "sample_text": sample_text,
-            "preview_height": preview_height,
             "filter_tb": filter_tb,
             "diff_only": diff_only,
             "sort_by": sort_by,
@@ -542,6 +536,9 @@ class UIBuilder:
     
     def _create_output_section(self) -> Dict[str, gr.Component]:
         """Create output section components."""
+        gr.Markdown("### Font Previews")
+        preview_html = gr.HTML()
+        
         df_out = gr.Dataframe(
             headers=["Character", "Unicode", "CoverageCount"],
             interactive=False,
@@ -550,9 +547,6 @@ class UIBuilder:
         )
         note_md = gr.Markdown()
         csv_out = gr.File(label="Download CSV")
-        
-        gr.Markdown("### Font Previews")
-        preview_html = gr.HTML()
         
         return {
             "df_out": df_out,
@@ -581,7 +575,7 @@ class UIBuilder:
         )
         
         # Preview generation handler
-        preview_inputs = [file_input, controls["sample_text"], controls["preview_height"]]
+        preview_inputs = [file_input, controls["sample_text"]]
         preview_outputs = [outputs["preview_html"]]
         
         compare_btn.click(
@@ -604,7 +598,7 @@ class UIBuilder:
             )
         
         # Preview update handlers
-        preview_components = [file_input, controls["sample_text"], controls["preview_height"]]
+        preview_components = [file_input, controls["sample_text"]]
         
         for component in preview_components:
             component.change(
