@@ -4,6 +4,8 @@
 
 A program that comparing character coverage across multiple font files.
 
+![Web GUI](Web-GUI.png)
+
 ## ✨ Features
 
 ### Core Functionality

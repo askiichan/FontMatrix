@@ -16,7 +16,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 # Constants
-DEFAULT_SAMPLE_TEXT = "The quick brown fox jumps over the lazy dog — 123 一二三四"
+DEFAULT_SAMPLE_TEXT = "The 導遊's 笔记 includes a link to the best local 牛肉麵 shop."
 MAX_FONTS = 5
 SUPPORTED_EXTENSIONS = {".ttf", ".otf"}
 
@@ -404,7 +404,7 @@ class FontMatrixApp:
                     row = (
                         f'<div class="font-row">'
                         f'<div class="font-caption">{name}</div>'
-                        f'<img src="{uri}" alt="{name}" '
+                        f'<img src="{uri}" alt="{name}" class="font-preview-img" '
                         f'style="height:96px;max-width:100%;display:block;" />'
                         f'</div>'
                     )
@@ -416,10 +416,18 @@ class FontMatrixApp:
             # Generate CSS and HTML
             styles = (
                 "<style>"
-                "#font-previews .font-row{display:flex;align-items:center;gap:16px;"
-                "padding:8px 0;border-bottom:1px solid rgba(128,128,128,.3);}"
-                "#font-previews .font-caption{width:260px;font-family:monospace;"
-                "font-size:13px;word-break:break-all;opacity:.85;}"
+                "#font-previews .font-row{display:grid;grid-template-columns:1fr 3fr;gap:20px;"
+                "padding:12px 0;border-bottom:1px solid rgba(128,128,128,.2);"
+                "align-items:center;min-height:110px;}"
+                "#font-previews .font-caption{font-family:system-ui,-apple-system,sans-serif;"
+                "font-size:14px;font-weight:500;"
+                "word-wrap:break-word;overflow-wrap:break-word;hyphens:auto;"
+                "padding:8px 12px;background:rgba(0,0,0,.03);"
+                "#font-previews .font-preview-img{justify-self:start;max-width:100%;}"
+                "@media (max-width: 768px) {"
+                "#font-previews .font-row{grid-template-columns:1fr;gap:10px;text-align:center;}"
+                "#font-previews .font-caption{margin-bottom:8px;}"
+                "}"
                 "</style>"
             )
             
